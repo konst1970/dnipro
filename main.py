@@ -72,7 +72,7 @@ class CurrentSource(Component):
         circuit.A[ind, len(circuit.components)+len(circuit.nodes)-1+ind] = -1
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
                  len(circuit.nodes)-1+ind] = -1
-        circuit.b[len(circuit.components)+len(circuit.nodes)-1+ind] = self.args
+        circuit.b[len(circuit.components)+len(circuit.nodes)-1+ind] = -self.args
 
 
 class Circuit():
@@ -115,7 +115,7 @@ class Circuit():
 
 def run_test_circuit(name):
     R1 = Resistor(0, 1, 2) # 2 Ohm
-    R2 = Resistor(1, 2, 1) # 1 Ohm
+    R2 = Resistor(2, 1, 1) # 1 Ohm
     R3 = Resistor(0, 2, 1) # 1 Ohm
     I1 = CurrentSource(0, 1, 1) # 1 Amper
 
@@ -131,4 +131,4 @@ def run_test_circuit(name):
 if __name__ == '__main__':
     print("DNIPRO v.0.0.1 (c) 2021, all rights reserved")
     run_test_circuit("Test Circuit")
-
+    
