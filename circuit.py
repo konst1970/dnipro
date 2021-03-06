@@ -35,6 +35,6 @@ class Circuit():
         for component in self.components:
             component.add(self)
 
-    def solve(self):
+    def solve_DC(self):
         self.calc_all_nodes_OTM()
         self.x = numpy.linalg.solve(self.A, self.b)
