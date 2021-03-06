@@ -18,10 +18,10 @@ class Resistor(Component):
         self.args = resistance
 
     def add(self, circuit):
-        print ("R(", self.nodes[0], ",", self.nodes[1], ")=", self.args)
+        # print ("R(", self.nodes[0], ",", self.nodes[1], ")=", self.args)
         # find my index in component list
         ind = circuit.components.index (self)
-        print ("Index=", ind)
+        # print ("Index=", ind)
 
         i = self.nodes[0]
         j = self.nodes[1]
@@ -53,10 +53,10 @@ class CurrentSource(Component):
         self.args = current
 
     def add(self, circuit):
-        print ("I(", self.nodes[0], ",", self.nodes[1], ")=", self.args)
+        # print ("I(", self.nodes[0], ",", self.nodes[1], ")=", self.args)
         # find my index in component list
         ind = circuit.components.index (self)
-        print ("Index=", ind)
+        # print ("Index=", ind)
 
         i = self.nodes[0]
         j = self.nodes[1]
@@ -96,6 +96,10 @@ class Circuit():
         self.components = self.components + [component]
         self.nodes = list(set(self.nodes) | set(component.nodes)) # add new nodes to list
 
+    def add_components(self, component_list):
+        for component in component_list:
+            self.add_component(component)
+
     def calc_all_nodes_OTM(self):
         self.size = len(self.nodes)-1 + 2*len(self.components)
         self.A = numpy.zeros(shape=(self.size,self.size))
@@ -117,20 +121,8 @@ def run_test_circuit(name):
 
     # V1 = VoltageSource(0, 2, 1) # 1 Volt
 
-    # R1.print()
-    # R2.print()
-    # R3.print()
-    # V1.print()
-    # I1.print()
-
     test_circuit = Circuit()
-
-    test_circuit.add_component(R1)
-    test_circuit.add_component(R2)
-    test_circuit.add_component(R3)
-    test_circuit.add_component(I1)
-
-    # test_circuit.add_component(V1)
+    test_circuit.add_components([R1, R2, R3, I1])
 
     test_circuit.solve()
 
