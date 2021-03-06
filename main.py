@@ -71,8 +71,8 @@ class CurrentSource(Component):
 
         circuit.A[ind, len(circuit.components)+len(circuit.nodes)-1+ind] = -1
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
-                 len(circuit.nodes)-1+ind] = -1
-        circuit.b[len(circuit.components)+len(circuit.nodes)-1+ind] = -self.args
+                 len(circuit.nodes)-1+ind] = 1
+        circuit.b[len(circuit.components)+len(circuit.nodes)-1+ind] = self.args
 
 
 class Circuit():
@@ -131,4 +131,3 @@ def run_test_circuit(name):
 if __name__ == '__main__':
     print("DNIPRO v.0.0.1 (c) 2021, all rights reserved")
     run_test_circuit("Test Circuit")
-    
