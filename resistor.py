@@ -22,8 +22,12 @@ class Resistor(Component):
           circuit.A[ind, j-1] = 1
           circuit.A[len(circuit.components)+j-1,len(circuit.nodes)+ind-1] = 1
 
+        # -I
         circuit.A[ind, len(circuit.components)+len(circuit.nodes)-1+ind] = -1
+
+        # I
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
                   len(circuit.components)+len(circuit.nodes)-1+ind] = 1
+        # R(j)
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
                  len(circuit.nodes)-1+ind] = -self.args
