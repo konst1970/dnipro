@@ -113,7 +113,7 @@ class Circuit():
         self.calc_all_nodes_OTM()
         self.x = numpy.linalg.solve(self.A, self.b)
 
-def run_test_circuit(name):
+def run_test_circuit_1(name):
     R1 = Resistor(0, 1, 2) # 2 Ohm
     R2 = Resistor(2, 1, 1) # 1 Ohm
     R3 = Resistor(0, 2, 1) # 1 Ohm
@@ -130,4 +130,4 @@ def run_test_circuit(name):
 
 if __name__ == '__main__':
     print("DNIPRO v.0.0.1 (c) 2021, all rights reserved")
-    run_test_circuit("Test Circuit")
+    run_test_circuit_1("Test Circuit")
