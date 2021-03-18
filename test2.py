@@ -17,8 +17,8 @@ from voltage_source import VoltageSource
 from circuit import Circuit
 
 def run_test_circuit_2(name):
-    R1 = Resistor(1, 0, 1, 2) # 2 Ohm
-    V1 = VoltageSource(1, 0, 1, 1) # 1 Volt
+    R1 = Resistor(1, [0, 1], 2) # 2 Ohm
+    V1 = VoltageSource(1, [0, 1], 1) # 1 Volt
 
     test_circuit = Circuit()
     test_circuit.add_components([R1, V1])

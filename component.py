@@ -1,5 +1,5 @@
 class Component:
-    def __init__(self, _id, nodes, args):
+    def __init__(self, _id: int, nodes: list, args: float):
         self.id = _id
         self.nodes = nodes
         self.args = args

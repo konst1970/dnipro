@@ -1,9 +1,9 @@
 from component import Component
 
 class Conductor(Component):
-    def __init__(self, _id, i, j, conductivity):
+    def __init__(self, _id: int, nodes: list, conductivity: float):
         self.id = _id
-        self.nodes = [i,j]
+        self.nodes = nodes
         self._args = conductivity
 
     @property
@@ -39,6 +39,23 @@ class Conductor(Component):
         # I
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
                  len(circuit.nodes)-1+ind] = 1 # -self.args
+        
+    def add_HM10(self, circuit):
+        i = self.nodes[0]
+        j = self.nodes[1]
+
+        if i > 0 and j > 0:
+            circuit.A[i - 1, i - 1] += self._args
+            circuit.A[i - 1, j - 1] += self._args
+            circuit.A[j - 1, i - 1] += self._args
+            circuit.A[j - 1, j - 1] += self._args
+            print(1/self._args)
+        elif i > 0 and j == 0:
+            circuit.A[i - 1, i - 1] += self._args
+            print(1/self._args)
+        elif i == 0 and j > 0:
+            circuit.A[j - 1, j - 1] += self._args
+            print(1/self._args)
 
     def __str__(self):
         return f"{Conductor.__name__}{self.id}"
