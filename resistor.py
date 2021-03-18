@@ -50,13 +50,10 @@ class Resistor(Component):
             circuit.A[i - 1, j - 1] += -1 / self._args
             circuit.A[j - 1, i - 1] += -1 / self._args
             circuit.A[j - 1, j - 1] += 1 / self._args
-            print(1/self._args)
         elif i > 0 and j == 0:
             circuit.A[i - 1, i - 1] += 1 / self._args
-            print(1/self._args)
         elif i == 0 and j > 0:
             circuit.A[j - 1, j - 1] += -1 / self._args
-            print(1/self._args)
 
 
     def __str__(self):
