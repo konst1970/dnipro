@@ -1,12 +1,12 @@
 #
 #             ####
-#    ####### # I1 # ######
+#    ####### # I2 # ######
 #    #        ####       #
 #    #                   #
 # ####                   #####
 #    #                   #
 #    #      #######      #  
-#    #####  #  R2 # ######
+#    #####  #  R1 # ######
 #           #######
 # 
 
@@ -17,11 +17,11 @@ from voltage_source import VoltageSource
 from circuit import Circuit
 
 def run_test_circuit_1(name):
-    R1 = Resistor(1, [0, 1], 2) # 2 Ohm
-    I1 = CurrentSource(2, [0, 1], 1) # 1 Ampere
+    R1 = Resistor('R1', [0, 1], 2) # 2 Ohm
+    I2 = CurrentSource('I2', [0, 1], 1) # 1 Ampere
 
     test_circuit = Circuit()
-    test_circuit.add_components([R1, I1])
+    test_circuit.add_components([R1, I2])
 
     test_circuit.solve_DC() # DC
 

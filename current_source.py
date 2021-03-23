@@ -1,8 +1,8 @@
 from component import Component
 
 class CurrentSource(Component):
-    def __init__(self, _id: int, nodes: list, current: float):
-        self.id = _id
+    def __init__(self, name: str, nodes: list, current: float):
+        self.name = name
         self.nodes = nodes
         self._args = current
     
@@ -24,12 +24,12 @@ class CurrentSource(Component):
         j = self.nodes[1]
 
         if (i > 0):
-          circuit.A[ind, i-1] = -1
-          circuit.A[len(circuit.components)+i-1,len(circuit.nodes)+ind-1] = -1
+          circuit.A[ind, i-1] = 1
+          circuit.A[len(circuit.components)+i-1,len(circuit.nodes)+ind-1] = 1
 
         if (j > 0):
-          circuit.A[ind, j-1] = 1
-          circuit.A[len(circuit.components)+j-1,len(circuit.nodes)+ind-1] = 1
+          circuit.A[ind, j-1] = -1
+          circuit.A[len(circuit.components)+j-1,len(circuit.nodes)+ind-1] = -1
 
         # -I
         circuit.A[ind, len(circuit.components)+len(circuit.nodes)-1+ind] = -1
@@ -45,18 +45,8 @@ class CurrentSource(Component):
             circuit.b[i - 1] = -self._args
         if j > 0:
             circuit.b[j - 1] = self._args
-
-    def add_HM5(self, circuit):
-        ind = circuit.components.index(self)
-
-        i = self.nodes[0]
-        j = self.nodes[1]
-
-        if (i > 0):
-            circuit.A[ind, i - 1] = 1
-        
-        if (j > 0):
-            circuit.A[ind, j - 1] = -1
     
     def __str__(self):
+        if self.name:
+            return f"{self.name}"
         return f"{CurrentSource.__name__}{self.id}"

@@ -1,8 +1,8 @@
 from component import Component
 
 class Resistor(Component):
-    def __init__(self, _id: int, nodes: list, resistance: float):
-        self.id = _id
+    def __init__(self, name: str, nodes: list, resistance: float):
+        self.name = name
         self.nodes = nodes
         self._args = resistance
     
@@ -57,4 +57,6 @@ class Resistor(Component):
 
 
     def __str__(self):
-        return f"{Resistor.__name__}{self.id}"
+        if self.name:
+            return f"{self.name}"
+        return f"{Resistor.__name__}"
