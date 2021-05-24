@@ -5,6 +5,7 @@ class CurrentSource(Component):
         self.name = name
         self.nodes = nodes
         self._args = current
+        self.index = "Ampere"
     
     @property
     def args(self):
@@ -14,9 +15,12 @@ class CurrentSource(Component):
     def args(self, current):
         self._args = current
 
-    def add_OTM(self, circuit):
+    def add_OTM(self, circuit, step=None):
         # print ("I(", self.nodes[0], ",", self.nodes[1], ")=", self.args)
         # find my index in component list
+        if step == None:
+            step = 0
+        
         ind = circuit.components.index(self)
         # print ("Index=", ind)
 
@@ -33,9 +37,14 @@ class CurrentSource(Component):
 
         # -I
         circuit.A[ind, len(circuit.components)+len(circuit.nodes)-1+ind] = -1
+
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
                  len(circuit.nodes)-1+ind] = 1
+
         circuit.b[len(circuit.components)+len(circuit.nodes)-1+ind] = self._args
+
+    def refresh_OTM(self, circuit, vector, step, ):
+        pass
 
     def add_HM10(self, circuit):
         i = self.nodes[0]

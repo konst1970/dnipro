@@ -5,6 +5,7 @@ class VoltageSource(Component):
         self.name = name
         self.nodes = nodes
         self._args = voltage
+        self.index = "Volt"
     
     @property
     def args(self):
@@ -14,7 +15,10 @@ class VoltageSource(Component):
     def args(self, voltage):
         self._args = voltage
     
-    def add_OTM(self, circuit):
+    def add_OTM(self, circuit, step=None):
+        if step == None:
+            step = 0
+
         ind = circuit.components.index(self)
 
         i = self.nodes[0]
@@ -30,9 +34,14 @@ class VoltageSource(Component):
 
         # -I
         circuit.A[ind, len(circuit.components)+len(circuit.nodes)-1+ind] = -1
+
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
                  len(circuit.components)+len(circuit.nodes)-1+ind] = 1
+
         circuit.b[len(circuit.components)+len(circuit.nodes)-1+ind] = self._args
+
+    def refresh_OTM(self, circuit, vector, step,):
+        pass
 
     def add_HM10(self, circuit):
         ind = circuit.components.index(self)

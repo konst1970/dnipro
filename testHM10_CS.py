@@ -29,4 +29,6 @@ if __name__ == '__main__':
 
     test_circuit.solve_DC('HM10')
 
+    test_circuit.print_matrix()
+    # test_circuit.print_results()
     test_circuit.print()

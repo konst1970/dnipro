@@ -5,6 +5,7 @@ class Conductor(Component):
         self.name = name
         self.nodes = nodes
         self._args = conductivity
+        self.index = "1/Ohm"
 
     @property
     def args(self):
@@ -14,9 +15,12 @@ class Conductor(Component):
     def args(self, conductivity):
         self._args = conductivity
 
-    def add_OTM(self, circuit):
+    def add_OTM(self, circuit, step=None):
         # print ("R(", self.nodes[0], ",", self.nodes[1], ")=", self.args)
         # find my index in component list
+        if step == None:
+            step = 0
+
         ind = circuit.components.index(self)
         # print ("Index=", ind)
 
@@ -39,7 +43,10 @@ class Conductor(Component):
         # I
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
                  len(circuit.nodes)-1+ind] = 1 # -self.args
-        
+    
+    def refresh_OTM(self, circuit, vector, step,):
+        pass
+
     def add_HM10(self, circuit):
         i = self.nodes[0]
         j = self.nodes[1]

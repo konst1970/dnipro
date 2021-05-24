@@ -25,7 +25,8 @@ def run_test_circuit_2(name):
 
     test_circuit.solve_DC() # DC
 
-    test_circuit.print()
+    test_circuit.print_matrix()
+    test_circuit.print_results()
 
 
 if __name__ == '__main__':

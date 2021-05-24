@@ -1,21 +1,25 @@
 from component import Component
 
-class Resistor(Component):
-    def __init__(self, name: str, nodes: list, resistance: float):
+class Capacitor(Component):
+    def __init__(self, name: str, nodes: list, capacity: float, init_value=None):
         self.name = name
         self.nodes = nodes
-        self._args = resistance
-        self.index = "Ohm"
-    
+        self._args = capacity
+        self.index = "F"
+        if init_value == None:
+            self.init_value = 0
+        else:
+            self.init_value = init_value
+
     @property
     def args(self):
         return self._args
     
     @args.setter
-    def args(self, resistance):
-        self._args = resistance
+    def args(self, capacity):
+        self._args = capacity
 
-    def add_OTM(self, circuit, step):
+    def add_OTM(self, circuit, step=None):
         # print ("R(", self.nodes[0], ",", self.nodes[1], ")=", self.args)
         # find my index in component list
         if step == None:
@@ -39,13 +43,18 @@ class Resistor(Component):
 
         # I
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
-                  len(circuit.components)+len(circuit.nodes)-1+ind] = 1
-        # R(j)
+                  len(circuit.nodes)-1+ind] = -1
         circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
-                 len(circuit.nodes)-1+ind] = -self._args
+                 len(circuit.components)+len(circuit.nodes)-1+ind] = self._args / step
+
+        circuit.b[len(circuit.nodes)+len(circuit.components)+ind-1][0] = self.init_value
     
-    def refresh_OTM(self, circuit, vector, step,):
-        pass
+    def refresh_OTM(self, circuit, vector, step): # 1 more arg
+        ind = circuit.components.index(self)
+        prelast = circuit.x[len(circuit.nodes)+len(circuit.components)+ind-1][0]
+
+        vector[len(circuit.components)+len(circuit.nodes)-1+ind] = self._args * prelast / step
+
     
     def add_HM10(self, circuit):
         i = self.nodes[0]
@@ -65,4 +74,4 @@ class Resistor(Component):
     def __str__(self):
         if self.name:
             return f"{self.name}"
-        return f"{Resistor.__name__}"
+        return f"{Capacitor.__name__}"
