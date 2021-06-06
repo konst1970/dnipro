@@ -1,22 +1,22 @@
+from utility import create_array
+
 import numpy
 import tensorflow as tf
-import timeit
+
+from component import Component
 
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from utility import bcolors
-
 class Circuit():
-    def __init__(self, gpu=False):
+    def __init__(self):
         self.nodes = []
         self.components = []
-        self.I = numpy.zeros(shape=(1,1))
-        self.A = numpy.zeros(shape=(1,1))
-        self.b = numpy.zeros(shape=(1,1))
-        self.x = numpy.zeros(shape=(1,1))
+        self.I = []
+        self.A = []
+        self.b = []
+        self.x = []
         self.size = 1
-        self.gpu = gpu
 
     def print(self):
         print(f"node -> {self.nodes}")
@@ -36,27 +36,29 @@ class Circuit():
     def calc_all_nodes_OTM(self, start=None, step=None, iter=None):
         nodes_len = len(self.nodes)
         components_len = len(self.components)
-        self.size = 2*components_len + nodes_len - 1
-        self.I = numpy.zeros(shape=(nodes_len, components_len))
-        self.A = numpy.zeros(shape=(self.size,self.size))
-        self.b = numpy.zeros(shape=(self.size,1))
-        self.x = numpy.zeros(shape=(self.size,1))
+        self.size = 2*components_len + nodes_len - 1 
+        self.I = create_array(nodes_len, components_len)
+        self.A = create_array(self.size, self.size)
+        self.b = create_array(self.size)
+        self.x = create_array(self.size)
 
         for i, component in enumerate(self.components):
             component.add_OTM(self, start, step, iter)
-            self.I[component.nodes[0], i] = 1
-            self.I[component.nodes[1], i] = -1
+            self.I[component.nodes[0]][i] = 1
+            self.I[component.nodes[1]][i] = -1
     
     def calc_all_nodes_HM10(self):
         num = 0
+        nodes_len = len(self.nodes)
+        components_len = len(self.components)
         for component in self.components:
             if str(component).find('V') > -1 or str(component).find('L') > -1:
                 num = num + 1
         
-        self.size = len(self.nodes) + num - 1
-        self.A = numpy.zeros(shape=(self.size, self.size))
-        self.b = numpy.zeros(shape=(self.size, 1))
-        self.x = numpy.zeros(shape=(self.size, 1))
+        self.size = nodes_len + num - 1
+        self.A = create_array(self.size, self.size)
+        self.b = create_array(self.size)
+        self.x = create_array(self.size)
 
         for component in self.components:
             component.add_HM10(self)
@@ -66,17 +68,13 @@ class Circuit():
             self.calc_all_nodes_OTM()
         elif model == 'HM10':
             self.calc_all_nodes_HM10()
-        
-        start_time = timeit.default_timer()
-        if self.gpu:
-            self.x = self._solve_gpu(self.A, self.b)
-        else:
-            self.x = numpy.linalg.solve(self.A, self.b)
-        end_time = timeit.default_timer() - start_time
-        print(end_time)
+        self.A = tf.constant(self.A, dtype = tf.float32)
+        self.b = tf.constant(self.b, shape = (self.size, 1), dtype = tf.float32)
+        self.x = tf.linalg.solve(self.A, self.b)
+        self.print_results(model)
 
         return {
-            'type': 'dc',
+            'type': 'ac',
             'result': self.x
         }
     
@@ -85,11 +83,7 @@ class Circuit():
         time_points = []
         
         self.calc_all_nodes_OTM(start, step, 0)
-        if self.gpu:
-            # self.x = self._solve_gpu(a, b)
-            self.x = self._solve_gpu(self.A, self.b)
-        else:
-            self.x = numpy.linalg.solve(self.A, self.b)
+        self.x = numpy.linalg.solve(self.A, self.b)
         result.append(self.x)
         time_points.append(start)
 
@@ -97,19 +91,14 @@ class Circuit():
         iter = int((stop - start) // step + 1) - 1
 
         for i in range(1, iter+1):
-            self.print_matrix()
             b2 = self.b
-            b1 = numpy.zeros(shape=(self.size, 1))
+            b1 = create_array(self.size)
             for component in self.components:
                 component.refresh_OTM(self, b1, start, step, i+1)
             # print(b1, "b1")
             self.b = numpy.add(b2, b1)
             # print(self.b, 'b')
-            if self.gpu:
-            # self.x = self._solve_gpu(a, b)
-                self.x = self._solve_gpu(self.A, self.b)
-            else:
-                self.x = numpy.linalg.solve(self.A, self.b)
+            self.x = numpy.linalg.solve(self.A, self.b)
             self.b = b2
             result.append(self.x)
             time_points.append(start + (i+1)*step)
@@ -122,11 +111,10 @@ class Circuit():
             'result': result
         }
 
-    def draw_plot(self, name, elem, analysis_result, param='V'):
+    def draw_result(self, name, elem, analysis_result, param='V'):
         plt.suptitle = name
 
         time_points = analysis_result['time_points']
-        
 
         elem_index = self.components.index(elem)
         elem_points = []
@@ -138,7 +126,7 @@ class Circuit():
             for el in analysis_result['result']:
                 elem_points.append(el[len(self.nodes)+elem_index-1][0])
 
-        # print(elem_points, 'elem')
+        print(elem_points, 'elem')
         plt.ylabel(f'{param}({str(elem)})')
         plt.xlabel('time')
         start = elem_points[0]
@@ -149,6 +137,7 @@ class Circuit():
         plt.plot(time_points, elem_points)
         plt.show()
 
+        
     def print_components(self):
         lst = []
         for comp in self.components:
@@ -159,25 +148,25 @@ class Circuit():
         nodes = len(self.nodes)
         comps = len(self.components)
         for i in range(nodes - 1):
-            print(f"{bcolors.WARNING}\u03C6{i + 1} = {self.x[i][0]} Volt.{bcolors.ENDC}")        
+            print(f"\u03C6{i + 1} = {self.x[i]} Volt")        
         if model == 'OTM':
             for i, comp in enumerate(self.components):
-                print(f"{bcolors.WARNING}{str(comp)} = {comp.args} {comp.index}.{bcolors.ENDC}")
-                print(f"{bcolors.WARNING}I{i + 1} = {self.x[nodes + i - 1][0]} Ampere | "
-                      f"{bcolors.WARNING}V{i + 1} = {self.x[nodes + comps + i - 1][0]} Volt.{bcolors.ENDC}")
+                print(f"{str(comp)} = {comp.args} {comp.index}")
+                print(f"I{i + 1} = {self.x[nodes + i - 1]} Ampere | "
+                      f"V{i + 1} = {self.x[nodes + comps + i - 1]} Volt")
         
 
     def result_vector(self):
         return self.x
     
-    def print_matrix(self):
-        line = ''
-        A = numpy.array2string(self.A).split('\n')
-        for i in range(self.size):
-            line = f"{A[i]}   {self.x[i:i+1][0]}   {self.b[i:i+1][0]}"
-            if i == self.size//2:
-                line = f"{A[i]} * {self.x[i:i+1][0]} = {self.b[i:i+1][0]}"
-            print(line)
+    # def print_matrix(self):
+    #     line = ''
+    #     # A = numpy.array2string(self.A).split('\n')
+    #     for i in range(self.size):
+    #         line = f"{A[i]}   {self.x[i:i+1][0]}   {self.b[i:i+1][0]}"
+    #         if i == self.size//2:
+    #             line = f"{A[i]} * {self.x[i:i+1][0]} = {self.b[i:i+1][0]}"
+    #         print(line)
        
     def print_graph(self):
         edges = []
@@ -211,13 +200,3 @@ class Circuit():
         plt.axis('off')
             
         plt.show()
-
-    @staticmethod
-    def _solve_gpu(x, y):
-        with tf.device('/gpu:0'):
-            A = tf.constant(x)
-            b = tf.constant(y)
-
-            res = tf.linalg.solve(A, b)
-
-            return res.numpy()

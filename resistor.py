@@ -15,12 +15,14 @@ class Resistor(Component):
     def args(self, resistance):
         self._args = resistance
 
-    def add_OTM(self, circuit, step):
+    def add_OTM(self, circuit, start=None, step=None, iter=None):
         # print ("R(", self.nodes[0], ",", self.nodes[1], ")=", self.args)
         # find my index in component list
         if step == None:
             step = 0
 
+        components_len = len(circuit.components)
+        nodes_len = len(circuit.nodes)
         ind = circuit.components.index(self)
 
         i = self.nodes[0]
@@ -28,23 +30,21 @@ class Resistor(Component):
 
         if (i > 0):
           circuit.A[ind, i-1] = 1
-          circuit.A[len(circuit.components)+i-1,len(circuit.nodes)+ind-1] = 1
+          circuit.A[components_len+i-1, nodes_len+ind-1] = 1
 
         if (j > 0):
           circuit.A[ind, j-1] = -1
-          circuit.A[len(circuit.components)+j-1,len(circuit.nodes)+ind-1] = -1
+          circuit.A[components_len+j-1, nodes_len+ind-1] = -1
 
         # -I
-        circuit.A[ind, len(circuit.components)+len(circuit.nodes)-1+ind] = -1
+        circuit.A[ind, components_len+nodes_len-1+ind] = -1
 
         # I
-        circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
-                  len(circuit.components)+len(circuit.nodes)-1+ind] = 1
+        circuit.A[components_len+nodes_len-1+ind, components_len+nodes_len-1+ind] = 1
         # R(j)
-        circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
-                 len(circuit.nodes)-1+ind] = -self._args
+        circuit.A[components_len+nodes_len-1+ind, nodes_len-1+ind] = -self._args
     
-    def refresh_OTM(self, circuit, vector, step,):
+    def refresh_OTM(self, circuit, vector, start, step, iter):
         pass
     
     def add_HM10(self, circuit):

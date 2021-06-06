@@ -19,12 +19,14 @@ class Capacitor(Component):
     def args(self, capacity):
         self._args = capacity
 
-    def add_OTM(self, circuit, step=None):
+    def add_OTM(self, circuit, start=None, step=None, iter=None):
         # print ("R(", self.nodes[0], ",", self.nodes[1], ")=", self.args)
         # find my index in component list
         if step == None:
             step = 0
 
+        components_len = len(circuit.components)
+        nodes_len = len(circuit.nodes)
         ind = circuit.components.index(self)
 
         i = self.nodes[0]
@@ -32,28 +34,28 @@ class Capacitor(Component):
 
         if (i > 0):
           circuit.A[ind, i-1] = 1
-          circuit.A[len(circuit.components)+i-1,len(circuit.nodes)+ind-1] = 1
+          circuit.A[components_len+i-1, nodes_len+ind-1] = 1
 
         if (j > 0):
           circuit.A[ind, j-1] = -1
-          circuit.A[len(circuit.components)+j-1,len(circuit.nodes)+ind-1] = -1
+          circuit.A[components_len+j-1, nodes_len+ind-1] = -1
 
         # -I
-        circuit.A[ind, len(circuit.components)+len(circuit.nodes)-1+ind] = -1
+        circuit.A[ind, components_len+nodes_len-1+ind] = -1
 
         # I
-        circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
-                  len(circuit.nodes)-1+ind] = -1
-        circuit.A[len(circuit.components)+len(circuit.nodes)-1+ind,
-                 len(circuit.components)+len(circuit.nodes)-1+ind] = self._args / step
+        circuit.A[components_len+nodes_len-1+ind, nodes_len-1+ind] = -1
+        circuit.A[components_len+nodes_len-1+ind, components_len+nodes_len-1+ind] = self._args / step
 
-        circuit.b[len(circuit.nodes)+len(circuit.components)+ind-1][0] = self.init_value
+        circuit.b[nodes_len+components_len+ind-1] = self.init_value
     
-    def refresh_OTM(self, circuit, vector, step): # 1 more arg
+    def refresh_OTM(self, circuit, vector, start, step, iter): # 1 more arg
+        components_len = len(circuit.components)
+        nodes_len = len(circuit.nodes)
         ind = circuit.components.index(self)
-        prelast = circuit.x[len(circuit.nodes)+len(circuit.components)+ind-1][0]
+        prelast = circuit.x[nodes_len+components_len+ind-1]
 
-        vector[len(circuit.components)+len(circuit.nodes)-1+ind] = self._args * prelast / step
+        vector[nodes_len+components_len+ind-1] = self._args * prelast / step
 
     
     def add_HM10(self, circuit):
