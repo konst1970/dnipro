@@ -1,6 +1,6 @@
 # 
 #                         ##########
-#    ########## 1 ######  #   G1   # ######## 2
+#    ########## 1 ######  #   G3   # ######## 2
 #    #          #         ##########          #
 #    #          #                             #
 #   ####      ######                        ######
@@ -16,18 +16,17 @@
 from resistor import Resistor
 from conductivity import Conductor
 from current_source import CurrentSource
-from voltage_source import VoltageSource
 from circuit import Circuit
 
 
 def run_test_circuit_4(name):
-    G1 = Conductor('G1', [1, 0], 0.5) # 0.5 1/Ohm
-    R2 = Resistor('R2', [1, 2], 1) # 1 Ohm
-    R3 = Resistor('R3', [2, 0], 1) # 1 Ohm
-    I4 = CurrentSource('I4', [1, 0], 1) # 1 Ampere
+    G2 = Conductor('G2', [1, 0], 0.25) # 0.5 1/Ohm
+    R1 = Resistor('R1', [1, 2], 1) # 2 Ohm
+    R3 = Resistor('R3', [2, 0], 5) # 4 Ohm
+    I4 = CurrentSource('I4', [0, 1], 2) # 0.5 Ampere
 
     test_circuit = Circuit()
-    test_circuit.add_components([G1, R2, R3, I4])
+    test_circuit.add_components([R1, G2, R3, I4])
 
     test_circuit.solve_DC() # DC
 

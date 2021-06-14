@@ -10,7 +10,7 @@ class VoltageSource(Component):
         if ac_voltage:
             self.ac_voltage = ac_voltage
         else:
-            ac_voltage = 0
+            self.ac_voltage = 0
     
     @property
     def args(self):

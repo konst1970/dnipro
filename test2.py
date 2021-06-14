@@ -1,23 +1,22 @@
 #
 #             ####
-#    ####### # V1 # ######
-#    #        ####       #
-#    #                   #
-# ####                   #####
-#    #                   #
-#    #      #######      #  
-#    #####  #     # ######
-#           #######
+#    ####### # V2 # #######
+#    #        ####        #
+#    #                    #
+# ####                    #####
+#    #                    #
+#    #      ########      #  
+#    #####  #  R1  # ######
+#           ########
 # 
 
 from resistor import Resistor
 from conductivity import Conductor
-from current_source import CurrentSource
 from voltage_source import VoltageSource
 from circuit import Circuit
 
 def run_test_circuit_2(name):
-    R1 = Resistor('R1', [0, 1], 2) # 2 Ohm
+    R1 = Resistor('R1', [0, 1], 5) # 5 Ohm
     V2 = VoltageSource('V2', [0, 1], 1) # 1 Volt
 
     test_circuit = Circuit()

@@ -56,7 +56,7 @@ class Inductor(Component):
         ind = circuit.components.index(self)
         prelast = circuit.x[nodes_len+ind-1]
         
-        vector[nodes_len-1+ind] = self._args * prelast / step
+        vector[nodes_len+components_len-1+ind] = self._args * prelast / step
     
     def add_HM10(self, circuit):
         i = self.nodes[0]

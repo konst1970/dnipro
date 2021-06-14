@@ -21,20 +21,23 @@ from circuit import Circuit
 
 
 def run_test_circuit_5(name):
-    I1 = CurrentSource('I1', [0, 1], 2, (1, 0.5)) # 2 Ampere
-    R2 = Resistor('R2', [1, 0], 10) # 1 Ohm
-    C3 = Capacitor('C3', [1, 0], 0.1, 0.) # 1 F # U_start = 0.1 argument
+    I2 = CurrentSource('I1', [0, 1], 2, (2, 0.23, 0.1)) # 2 Ampere
+    R1 = Resistor('R2', [1, 0], 10) # 1 Ohm
+    C3 = Capacitor('C3', [1, 0], 1e-6, 0 ) # 1e-6 F # U_start = 0 argument
 
-    test_circuit = Circuit(gpu=True)
-    test_circuit.add_components([I1, R2, C3])
+    test_circuit = Circuit()
+    test_circuit.add_components([R1, I2, C3])
 
     # test_circuit.solve_DC() # DC
-    res = test_circuit.solve_AC(0, 2, 0.1)
-    print(res['result'])
+    res = test_circuit.solve_AC(0, 1e-4, 0.5e-7) # AC
+    # print(res['result'])
 
     test_circuit.print_results()
-    test_circuit.draw_result(name, I1, res, 'V')
-    test_circuit.draw_result(name, C3, res, 'V')
+    test_circuit.print_matrix()
+    
+    test_circuit.draw_plot(name, I2, res, 'I')
+    test_circuit.draw_plot(name, R1, res, 'V')
+    test_circuit.draw_plot(name, C3, res, 'I')
 
 if __name__ == '__main__':
     print("DNIPRO v.0.0.1 (c) 2021, all rights reserved")

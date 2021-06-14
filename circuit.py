@@ -79,6 +79,21 @@ class Circuit():
             'type': 'dc',
             'result': self.x
         }
+
+    def solve_DC_sweep(self, elem, start, stop, step):
+        result = []
+        self.calc_all_nodes_OTM()
+
+        iter = int((stop - start) // step + 1) - 1
+        ind = self.components.index(elem)
+        for i in range(iter + 1):
+            self.b[len(self.components)+len(self.nodes)+ind-1] = start + i*step
+            result.append(numpy.linalg.solve(self.A, self.b))
+
+        return {
+            'type': 'dc',
+            'result': result,
+        }
     
     def solve_AC(self, start, stop, step):
         result = []
@@ -126,7 +141,6 @@ class Circuit():
         plt.suptitle = name
 
         time_points = analysis_result['time_points']
-        
 
         elem_index = self.components.index(elem)
         elem_points = []
@@ -139,14 +153,34 @@ class Circuit():
                 elem_points.append(el[len(self.nodes)+elem_index-1][0])
 
         # print(elem_points, 'elem')
-        plt.ylabel(f'{param}({str(elem)})')
-        plt.xlabel('time')
+        plt.ylabel(f'{param} ({str(elem)})')
+        plt.xlabel('time, s')
         start = elem_points[0]
         stop = elem_points[1]
 
         # plt.axis([analysis_result['start'], analysis_result['stop'], start, stop])
 
         plt.plot(time_points, elem_points)
+        plt.show()
+    
+    def draw_VA_plot(self, name, elem, analysis_result):
+        plt.suptitle = name
+        elem_index = self.components.index(elem)
+
+        V_points = []
+        A_points = []
+
+        for el in analysis_result['result']:
+            A_points.append(el[len(self.nodes)+elem_index-1][0])
+            V_points.append(el[len(self.nodes)+len(self.components)+elem_index-1][0])
+            
+        # print(elem_points, 'elem')
+        plt.ylabel(f'V ({str(elem)})')
+        plt.xlabel(f'I ({str(elem)})')
+
+        # plt.axis([analysis_result['start'], analysis_result['stop'], start, stop])
+
+        plt.plot(A_points, V_points)
         plt.show()
 
     def print_components(self):
@@ -174,9 +208,9 @@ class Circuit():
         line = ''
         A = numpy.array2string(self.A).split('\n')
         for i in range(self.size):
-            line = f"{A[i]}   {self.x[i:i+1][0]}   {self.b[i:i+1][0]}"
+            line = f"{A[i]}   x{i+1}   {self.b[i:i+1][0]}"
             if i == self.size//2:
-                line = f"{A[i]} * {self.x[i:i+1][0]} = {self.b[i:i+1][0]}"
+                line = f"{A[i]} * x{i+1} = {self.b[i:i+1][0]}"
             print(line)
        
     def print_graph(self):

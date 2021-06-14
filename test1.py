@@ -1,13 +1,13 @@
 #
 #             ####
-#    ####### # I2 # ######
-#    #        ####       #
-#    #                   #
-# ####                   #####
-#    #                   #
-#    #      #######      #  
-#    #####  #  R1 # ######
-#           #######
+#    ####### # I2 # #######
+#    #        ####        #
+#    #                    #
+# ####                    #####
+#    #                    #
+#    #      ########      #  
+#    #####  #  R1  # ######
+#           ########
 # 
 
 from resistor import Resistor
@@ -18,8 +18,8 @@ from circuit import Circuit
 
 
 def run_test_circuit_1(name):
-    R1 = Resistor('R1', [0, 1], 2) # 2 Ohm
-    I2 = CurrentSource('I2', [0, 1], 1) # 1 Ampere
+    R1 = Resistor('R1', [0, 1], 3) # 3 Ohm
+    I2 = CurrentSource('I2', [0, 1], 2) # 2 Ampere
 
     test_circuit = Circuit()
     test_circuit.add_components([R1, I2])
@@ -28,7 +28,7 @@ def run_test_circuit_1(name):
 
     test_circuit.print_matrix()
     test_circuit.print_results()
-    test_circuit.print_graph()
+    # test_circuit.print_graph()
 
 
 if __name__ == '__main__':

@@ -4,19 +4,20 @@ from circuit import Circuit
 
 
 def run_test_circuit_4(name):
-    R2 = Resistor('R2', [1, 2], 1) # 1 Ohm
-    R3 = Resistor('R3', [2, 0], 1) # 1 Ohm
-    I4 = CurrentSource('I4', [1, 0], 1) # 1 Ampere
-    R5 = Resistor('R5', [3, 2], 1) # 1 Ohm
-    R6 = Resistor('R6', [4, 1], 1) # 1 Ohm
-    R7 = Resistor('R7', [4, 0], 1) # 1 Ohm
-    R8 = Resistor('R8', [3, 1], 1) # 1 Ohm
+    R1 = Resistor('R1', [1, 2], 1) # 1 Ohm
+    R2 = Resistor('R2', [2, 0], 1) # 1 Ohm
+    I3 = CurrentSource('I3', [1, 0], 1) # 1 Ampere
+    R4 = Resistor('R4', [3, 2], 1) # 1 Ohm
+    R5 = Resistor('R5', [4, 1], 1) # 1 Ohm
+    R6 = Resistor('R6', [4, 0], 1) # 1 Ohm
+    R7 = Resistor('R7', [3, 1], 1) # 1 Ohm
 
     test_circuit = Circuit(gpu=True)
-    test_circuit.add_components([R2, R3, I4, R5, R6, R7, R8])
+    test_circuit.add_components([R1, R2, I3, R4, R5, R6, R7])
 
     
     test_circuit.solve_DC() # DC
+    test_circuit.print_results()
 
 
 if __name__ == '__main__':
