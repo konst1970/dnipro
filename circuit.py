@@ -73,11 +73,12 @@ class Circuit():
         else:
             self.x = numpy.linalg.solve(self.A, self.b)
         end_time = timeit.default_timer() - start_time
-        print(end_time)
+        # print(end_time)
 
         return {
             'type': 'dc',
-            'result': self.x
+            'result': self.x,
+            'res_time': end_time
         }
 
     def solve_DC_sweep(self, elem, start, stop, step):
